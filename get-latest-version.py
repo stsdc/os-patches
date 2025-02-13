@@ -174,19 +174,20 @@ for pocket in ["Release", "Security", "Updates"]:
     )
 
     # Add all changes
-    subprocess.check_call(["git", "add", "."], shell=True,)
+    subprocess.check_call(["git", "add", "."], shell=True,stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,)
     sleep(1)
 
     # Commit the changes
-    subprocess.check_call(
-        [
-            "git",
-            "commit",
-            "-m",
-            f"Update to {component_name} {pocket_version}",
-        ],
-        shell=True,
-    )
+    # subprocess.check_call(
+    #     [
+    #         "git",
+    #         "commit",
+    #         "-m",
+    #         f"Update to {component_name} {pocket_version}",
+    #     ],
+    #     shell=True,
+    # )
     # Push the new branch to the remote repository
     # subprocess.check_call(["git", "push", "origin", new_branch])
     # pr = repo.create_pull(
