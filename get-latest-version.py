@@ -159,10 +159,11 @@ for pocket in ["Release", "Security", "Updates"]:
         check=True,
     )
 
-    subprocess.check_output(
+    p = subprocess.check_output(
         "ls",
         stderr=subprocess.STDOUT,
         shell=True)
+    print(p)
     
     subprocess.run(
         f"cp -r {component_name}-{pocket_version}/* .",
