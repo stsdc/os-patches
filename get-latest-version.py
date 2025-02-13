@@ -156,7 +156,6 @@ for pocket in ["Release", "Security", "Updates"]:
         shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        check=True,
     )
 
     subprocess.check_call(
