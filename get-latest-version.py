@@ -145,13 +145,13 @@ for pocket in ["Release", "Security", "Updates"]:
     base_branch = f"{component_name}-{upstream_series_name}"
     new_branch = f"bot/update/{component_name}-{upstream_series_name}"
 
-    subprocess.run(["git", "fetch", "--all"], check=True)
+    subprocess.check_call(["git", "fetch", "--all"])
 
-    subprocess.run(["git", "switch", base_branch], check=True)
-    subprocess.run(["git", "checkout", "-b", new_branch], check=True)
+    subprocess.check_call(["git", "switch", base_branch])
+    subprocess.check_call(["git", "checkout", "-b", new_branch])
 
-    subprocess.run(["apt", "source", component_name], check=True)
-    subprocess.run(
+    subprocess.check_call(["apt", "source", component_name])
+    subprocess.check_call(
         "rm *.tar.* *.dsc",
         shell=True,
         stdout=subprocess.PIPE,
@@ -159,46 +159,37 @@ for pocket in ["Release", "Security", "Updates"]:
         check=True,
     )
 
-    p = subprocess.check_output(
-        "ls",
-        stderr=subprocess.STDOUT,
-        shell=True)
-    print(p)
-    
-    subprocess.run(
+    subprocess.check_call(
         f"cp -r {component_name}-{pocket_version}/* .",
         shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        check=True,
     )
 
-    subprocess.run(
+    subprocess.check_call(
         f"rm -r {component_name}-{pocket_version}",
         shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        check=True,
     )
 
     # Add all changes
-    subprocess.run(["git", "add", "."], check=True)
+    subprocess.check_call(["git", "add", "."], check=True)
     # Commit the changes
-    subprocess.run(
+    subprocess.check_call(
         [
             "git",
             "commit",
             "-m",
             f"Update to {component_name} {pocket_version}",
         ],
-        check=True,
     )
     # Push the new branch to the remote repository
-    # subprocess.run(["git", "push", "origin", new_branch], check=True)
+    # subprocess.check_call(["git", "push", "origin", new_branch])
     # pr = repo.create_pull(
     #     base=base_branch,
     #     head=new_branch,
     #     title=pull_title,
     #     body=f"""A new version of `{component_name} {pocket_version}` replaces `{patched_version}`.""",
     # )
-    subprocess.run(["git", "switch", "master"], check=True)
+    subprocess.check_call(["git", "switch", "master"])
