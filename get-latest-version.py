@@ -159,16 +159,11 @@ for pocket in ["Release", "Security", "Updates"]:
         check=True,
     )
 
-    subprocess.run(
+    subprocess.check_output(
         "ls",
-        shell=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        check=True,
-    )
+        stderr=subprocess.STDOUT,
+        shell=True)
     
-    print(f" → cp -r {component_name}-{pocket_version}/* .")
-
     subprocess.run(
         f"cp -r {component_name}-{pocket_version}/* .",
         shell=True,
@@ -176,9 +171,6 @@ for pocket in ["Release", "Security", "Updates"]:
         stderr=subprocess.PIPE,
         check=True,
     )
-
-
-    print(f" → rm -r {component_name}-{pocket_version}")
 
     subprocess.run(
         f"rm -r {component_name}-{pocket_version}",
@@ -201,11 +193,11 @@ for pocket in ["Release", "Security", "Updates"]:
         check=True,
     )
     # Push the new branch to the remote repository
-    subprocess.run(["git", "push", "origin", new_branch], check=True)
-    pr = repo.create_pull(
-        base=base_branch,
-        head=new_branch,
-        title=pull_title,
-        body=f"""A new version of `{component_name} {pocket_version}` replaces `{patched_version}`.""",
-    )
+    # subprocess.run(["git", "push", "origin", new_branch], check=True)
+    # pr = repo.create_pull(
+    #     base=base_branch,
+    #     head=new_branch,
+    #     title=pull_title,
+    #     body=f"""A new version of `{component_name} {pocket_version}` replaces `{patched_version}`.""",
+    # )
     subprocess.run(["git", "switch", "master"], check=True)
