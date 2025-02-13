@@ -174,7 +174,7 @@ for pocket in ["Release", "Security", "Updates"]:
     )
 
     # Add all changes
-    subprocess.check_call(["git", "add", "."], check=True)
+    subprocess.check_call(["git", "add", "."])
     # Commit the changes
     subprocess.check_call(
         [
