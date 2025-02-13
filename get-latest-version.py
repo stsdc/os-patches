@@ -174,8 +174,8 @@ for pocket in ["Release", "Security", "Updates"]:
     )
 
     # Add all changes
-    subprocess.check_call(["git", "add", "."], shell=True,stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,)
+    p = subprocess.run(["git", "add", "."], shell=True, check=True, capture_output=True, encoding='utf-8')
+    print(f'Command {p.args} exited with {p.returncode} code, output: \n{p.stdout}')
     sleep(1)
 
     # Commit the changes
