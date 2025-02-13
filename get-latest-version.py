@@ -3,7 +3,7 @@
 import os
 import subprocess
 import sys
-
+from time import sleep
 import apt_pkg
 from github import Github
 from launchpadlib.launchpad import Launchpad
@@ -164,6 +164,7 @@ for pocket in ["Release", "Security", "Updates"]:
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     )
+    sleep(1)
 
     subprocess.check_call(
         f"rm -r {component_name}-{pocket_version}",
