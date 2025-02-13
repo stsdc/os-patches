@@ -164,10 +164,10 @@ for pocket in ["Release", "Security", "Updates"]:
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     )
-    sleep(1)
-    files = os.listdir('.')
-    for file in files:
-        print(file)
+    # sleep(1)
+    # files = os.listdir('.')
+    # for file in files:
+    #     print(file)
 
     subprocess.check_call(
         f"rm -r {component_name}-{pocket_version}",
@@ -175,9 +175,9 @@ for pocket in ["Release", "Security", "Updates"]:
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     )
-    files = os.listdir('.')
-    for file in files:
-        print(file)
+    # files = os.listdir('.')
+    # for file in files:
+    #     print(file)
 
     # Add all changes
     p = subprocess.run("git add .", shell=True, check=True, capture_output=True, encoding='utf-8')
