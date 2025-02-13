@@ -150,7 +150,7 @@ for pocket in ["Release", "Security", "Updates"]:
     subprocess.check_call(["git", "switch", base_branch])
     subprocess.check_call(["git", "checkout", "-b", new_branch])
 
-    subprocess.check_call(["apt", "source", component_name], shell=True,)
+    subprocess.check_call(["apt", "source", component_name], shell=True, capture_output=True)
     subprocess.check_call(
         "rm *.tar.* *.dsc",
         shell=True,
