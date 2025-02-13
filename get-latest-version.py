@@ -49,10 +49,10 @@ series = ubuntu.getSeries(name_or_version=series_name)
 upstream_series = ubuntu.getSeries(name_or_version=upstream_series_name)
 
 # Initialize GitHub variables
-github_token = os.environ["GITHUB_TOKEN"]
-github_repo = os.environ["GITHUB_REPOSITORY"]
-github = Github(github_token)
-repo = github.get_repo(github_repo)
+# github_token = os.environ["GITHUB_TOKEN"]
+# github_repo = os.environ["GITHUB_REPOSITORY"]
+# github = Github(github_token)
+# repo = github.get_repo(github_repo)
 
 subprocess.run(
     [
@@ -113,17 +113,17 @@ def get_upstream_sources():
     )
 
 
-if len(patched_sources) == 0:
-    issue_title = f"Package {component_name} not found in os-patches PPA"
-    if not github_pull_exists(issue_title):
-        issue = repo.create_issue(
-            issue_title,
-            f"{component_name} found in the import list, but not in the PPA. Not deployed yet or removed by accident?",
-        )
-        print(
-            f"Package {component_name} not found in elementary os-patches! - Created issue {issue.number}"
-        )
-    sys.exit(0)
+# if len(patched_sources) == 0:
+#     issue_title = f"Package {component_name} not found in os-patches PPA"
+#     if not github_pull_exists(issue_title):
+#         issue = repo.create_issue(
+#             issue_title,
+#             f"{component_name} found in the import list, but not in the PPA. Not deployed yet or removed by accident?",
+#         )
+#         print(
+#             f"Package {component_name} not found in elementary os-patches! - Created issue {issue.number}"
+#         )
+#     sys.exit(0)
 
 patched_version = patched_sources[0].source_package_version
 
@@ -139,8 +139,8 @@ for pocket in ["Release", "Security", "Updates"]:
         continue
 
     pull_title = f"📦 Update {component_name} [{upstream_series_name}]"
-    if github_pull_exists(pull_title):
-        continue
+    # if github_pull_exists(pull_title):
+    #     continue
 
     base_branch = f"{component_name}-{upstream_series_name}"
     new_branch = f"bot/update/{component_name}-{upstream_series_name}"
