@@ -160,12 +160,25 @@ for pocket in ["Release", "Security", "Updates"]:
     )
 
     subprocess.run(
+        "ls",
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=True,
+    )
+    
+    print(f" → cp -r {component_name}-{pocket_version}/* .")
+
+    subprocess.run(
         f"cp -r {component_name}-{pocket_version}/* .",
         shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         check=True,
     )
+
+
+    print(f" → rm -r {component_name}-{pocket_version}")
 
     subprocess.run(
         f"rm -r {component_name}-{pocket_version}",
