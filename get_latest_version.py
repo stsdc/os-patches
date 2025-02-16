@@ -8,7 +8,7 @@ import apt_pkg
 from github import Github
 from launchpadlib.launchpad import Launchpad
 
-DEFAULT_SERIES_NAME = "noble"
+DEFAULT_SERIES_NAME = "yolo"
 
 SERIES_NAME = sys.argv[1]
 
@@ -34,7 +34,8 @@ def main():
     packages_and_upstream = get_packages_list()
 
     for package_and_upstream in packages_and_upstream:
-        package, *upstream_series = package_and_upstream.split(":", 1)
+        upstream_series = DEFAULT_SERIES_NAME
+        package, upstream_series = package_and_upstream.split(":", 1)
         print(package, upstream_series)
 
 if __name__ == "__main__":
