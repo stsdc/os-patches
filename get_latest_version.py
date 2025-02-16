@@ -113,6 +113,8 @@ def main():
             base_branch = f"{package_name}-{upstream_series_name}"
             new_branch = f"bot/update/{package_name}-{upstream_series_name}"
 
+            # checkout to the base_branch
+            current_repo.heads[base_branch].checkout()
 
 
 if __name__ == "__main__":
