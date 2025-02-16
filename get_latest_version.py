@@ -34,7 +34,7 @@ def main():
     packages_and_upstream = get_packages_list()
 
     for package_and_upstream in packages_and_upstream:
-        package, upstream_series = package_and_upstream.split(":", 1)
+        package, *upstream_series = package_and_upstream.split(":", 1)
         print(package, upstream_series)
 
 if __name__ == "__main__":
