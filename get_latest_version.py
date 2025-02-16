@@ -46,8 +46,7 @@ def main():
         git_config.add_value('safe','directory', "/__w/os-patches/os-patches")
 
 
-    for remote in current_repo.remotes:
-        remote.fetch(verbose=True)
+    current_repo.git.fetch("--all")
 
     # github_token = os.environ["GITHUB_TOKEN"]
     # github_repo = os.environ["GITHUB_REPOSITORY"]
