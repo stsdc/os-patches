@@ -5,15 +5,12 @@ import subprocess
 import sys
 from time import sleep
 import apt_pkg
+import git.config
 from github import Github
 from launchpadlib.launchpad import Launchpad
+import git
 
 DEFAULT_SERIES_NAME = "noble"
-
-SERIES_NAME = sys.argv[1]
-
-if not SERIES_NAME:
-    SERIES_NAME = DEFAULT_SERIES_NAME
 
 def get_packages_list() -> list:
     with open("/tmp/patched-packages", 'r', encoding='utf-8') as file:
@@ -22,6 +19,20 @@ def get_packages_list() -> list:
 
 def main():
     SERIES_NAME = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_SERIES_NAME
+
+    # Configuring this repo to be able to commit as a bot
+    current_repo = git.Repo('.')
+    with current_repo.config_writer() as git_config:
+        git_config.set_value('user', 'email', "github-actions[bot]@users.noreply.github.com")
+        git_config.set_value('user', 'name', "github-actions[bot]")
+        git_config.add_value('safe','directory', "/__w/os-patches/os-patches")
+
+    # github_token = os.environ["GITHUB_TOKEN"]
+    # github_repo = os.environ["GITHUB_REPOSITORY"]
+    # github = Github(github_token)
+    # repo = github.get_repo(github_repo)
+
+
 
     # Initialize APT
     apt_pkg.init_system()
@@ -40,9 +51,12 @@ def main():
     packages_and_upstream = get_packages_list()
 
     for package_and_upstream in packages_and_upstream:
-        package, *upstream_series = package_and_upstream.split(":", 1)
-        upstream_series = upstream_series[0] if upstream_series else SERIES_NAME
-        print(package, upstream_series)
+        package, *upstream_series_name = package_and_upstream.split(":", 1)
+        upstream_series_name = upstream_series_name[0] if upstream_series_name else SERIES_NAME
+        print(package, upstream_series_name)
+
+        series = ubuntu.getSeries(name_or_version=SERIES_NAME)
+        upstream_series = ubuntu.getSeries(name_or_version=upstream_series_name)
 
 if __name__ == "__main__":
     main()
