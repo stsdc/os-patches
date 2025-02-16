@@ -20,5 +20,5 @@ def get_packages_list() -> list:
         items = file.read().splitlines()
     return items
 
-
-print()
+pckgs = get_packages_list()
+print(pckgs)
