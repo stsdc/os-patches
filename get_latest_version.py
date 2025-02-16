@@ -43,6 +43,7 @@ def main():
     with current_repo.config_writer() as git_config:
         git_config.set_value('user', 'email', "github-actions[bot]@users.noreply.github.com")
         git_config.set_value('user', 'name', "github-actions[bot]")
+        git_config.set_value("checkout", "defaultRemote", "origin")
         git_config.add_value('safe','directory', "/__w/os-patches/os-patches")
 
 
