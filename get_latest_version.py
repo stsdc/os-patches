@@ -31,6 +31,12 @@ def main():
         "elementary daily test", "production", "~/.launchpadlib/cache/", version="devel"
     )
 
+    ubuntu = launchpad.distributions["ubuntu"]
+    ubuntu_archive = ubuntu.main_archive
+    patches_archive = launchpad.people["elementary-os"].getPPAByName(
+        distribution=ubuntu, name="os-patches"
+    )
+
     packages_and_upstream = get_packages_list()
 
     for package_and_upstream in packages_and_upstream:
