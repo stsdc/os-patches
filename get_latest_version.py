@@ -118,7 +118,7 @@ def main():
             # Create and checkout the new branch
             current_repo.git.checkout('-b', new_branch)
 
-            subprocess.run(["apt", "source", package_name], shell=True)
+            subprocess.run(["apt", "source", package_name], shell=True, check=True)
 
             subprocess.check_call(
                 "rm *.tar.* *.dsc",
