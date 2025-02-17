@@ -125,7 +125,7 @@ def main():
                     stderr=subprocess.PIPE,
                     check=True
                 )
-            print(p_apt_source.stdout)
+            print(p_apt_source.stdout.decode('utf-8'))
 
             subprocess.run(
                 "rm *.tar.* *.dsc",
