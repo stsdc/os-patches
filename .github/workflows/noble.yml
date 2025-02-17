@@ -15,7 +15,9 @@ jobs:
       #   fetch-depth: 1
 
     - name: Checkout import-list-noble
-      run: git switch import-list-noble
+      run: |
+        git config --global --add safe.directory /__w/os-patches/os-patches &&
+        git switch import-list-noble
 
     - name: Get the list of packages
       run: |
