@@ -118,6 +118,29 @@ def main():
             # Create and checkout the new branch
             current_repo.git.checkout('-b', new_branch)
 
+            subprocess.run(["apt", "source", package_name], shell=True, capture_output=True, check=True)
+
+            subprocess.check_call(
+                "rm *.tar.* *.dsc",
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+
+            subprocess.check_call(
+                f"cp -r {package_name}-{pocket_version}/* .",
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+
+            subprocess.check_call(
+                f"rm -r {package_name}-{pocket_version}",
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+
 
 if __name__ == "__main__":
     main()
