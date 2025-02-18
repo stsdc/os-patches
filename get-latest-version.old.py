@@ -3,7 +3,7 @@
 import os
 import subprocess
 import sys
-from time import sleep
+
 import apt_pkg
 from github import Github
 from launchpadlib.launchpad import Launchpad
@@ -49,10 +49,10 @@ series = ubuntu.getSeries(name_or_version=series_name)
 upstream_series = ubuntu.getSeries(name_or_version=upstream_series_name)
 
 # Initialize GitHub variables
-# github_token = os.environ["GITHUB_TOKEN"]
-# github_repo = os.environ["GITHUB_REPOSITORY"]
-# github = Github(github_token)
-# repo = github.get_repo(github_repo)
+github_token = os.environ["GITHUB_TOKEN"]
+github_repo = os.environ["GITHUB_REPOSITORY"]
+github = Github(github_token)
+repo = github.get_repo(github_repo)
 
 subprocess.run(
     [
@@ -113,17 +113,17 @@ def get_upstream_sources():
     )
 
 
-# if len(patched_sources) == 0:
-#     issue_title = f"Package {component_name} not found in os-patches PPA"
-#     if not github_pull_exists(issue_title):
-#         issue = repo.create_issue(
-#             issue_title,
-#             f"{component_name} found in the import list, but not in the PPA. Not deployed yet or removed by accident?",
-#         )
-#         print(
-#             f"Package {component_name} not found in elementary os-patches! - Created issue {issue.number}"
-#         )
-#     sys.exit(0)
+if len(patched_sources) == 0:
+    issue_title = f"Package {component_name} not found in os-patches PPA"
+    if not github_pull_exists(issue_title):
+        issue = repo.create_issue(
+            issue_title,
+            f"{component_name} found in the import list, but not in the PPA. Not deployed yet or removed by accident?",
+        )
+        print(
+            f"Package {component_name} not found in elementary os-patches! - Created issue {issue.number}"
+        )
+    sys.exit(0)
 
 patched_version = patched_sources[0].source_package_version
 
@@ -139,75 +139,71 @@ for pocket in ["Release", "Security", "Updates"]:
         continue
 
     pull_title = f"📦 Update {component_name} [{upstream_series_name}]"
-    # if github_pull_exists(pull_title):
-    #     continue
+    if github_pull_exists(pull_title):
+        continue
 
     base_branch = f"{component_name}-{upstream_series_name}"
     new_branch = f"bot/update/{component_name}-{upstream_series_name}"
 
-    subprocess.check_call(["git", "fetch", "--all"])
+    subprocess.run(["git", "fetch", "--all"], check=True)
 
-    subprocess.check_call(["git", "switch", base_branch])
-    subprocess.check_call(["git", "checkout", "-b", new_branch])
+    subprocess.run(["git", "switch", base_branch], check=True)
+    subprocess.run(["git", "checkout", "-b", new_branch], check=True)
 
-    subprocess.run(["apt", "source", component_name], shell=True, capture_output=True, check=True)
-    subprocess.check_call(
+    subprocess.run(["apt", "source", component_name], check=True)
+    subprocess.run(
         "rm *.tar.* *.dsc",
         shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
+        check=True,
     )
 
     try:
-        subprocess.check_call(
-            f"cp -r {component_name}-{pocket_version}/* .",
-            shell=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+        subprocess.run(
+                f"cp -r {component_name}-{pocket_version}/* .",
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True
         )
-    except subprocess.CalledProcessError:
-        subprocess.check_call(
-            f"cp -r {component_name}/* .",
-            shell=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+    except subprocess.CalledProcessError as err:
+        print(err)
+        print("Trying without pocket version")
+        subprocess.run(
+                f"cp -r {component_name}/* .",
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True
         )
-    # sleep(1)
-    # files = os.listdir('.')
-    # for file in files:
-    #     print(file)
 
-    subprocess.check_call(
+    subprocess.run(
         f"rm -r {component_name}-{pocket_version}",
         shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
+        check=True,
     )
-    # files = os.listdir('.')
-    # for file in files:
-    #     print(file)
 
     # Add all changes
-    p = subprocess.run("git add .", shell=True, check=True, capture_output=True, encoding='utf-8')
-    print(f'Command {p.args} exited with {p.returncode} code, output: \n{p.stdout}')
-    sleep(1)
-
+    subprocess.run(["git", "add", "."], check=True)
     # Commit the changes
-    # subprocess.check_call(
-    #     [
-    #         "git",
-    #         "commit",
-    #         "-m",
-    #         f"Update to {component_name} {pocket_version}",
-    #     ],
-    #     shell=True,
-    # )
+    subprocess.run(
+        [
+            "git",
+            "commit",
+            "-m",
+            f"Update to {component_name} {pocket_version}",
+        ],
+        check=True,
+    )
     # Push the new branch to the remote repository
-    # subprocess.check_call(["git", "push", "origin", new_branch])
-    # pr = repo.create_pull(
-    #     base=base_branch,
-    #     head=new_branch,
-    #     title=pull_title,
-    #     body=f"""A new version of `{component_name} {pocket_version}` replaces `{patched_version}`.""",
-    # )
-    subprocess.check_call(["git", "switch", "master"])
+    subprocess.run(["git", "push", "origin", new_branch], check=True)
+    pr = repo.create_pull(
+        base=base_branch,
+        head=new_branch,
+        title=pull_title,
+        body=f"""A new version of `{component_name} {pocket_version}` replaces `{patched_version}`.""",
+    )
+    subprocess.run(["git", "switch", "master"], check=True)
