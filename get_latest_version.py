@@ -3,19 +3,20 @@
 import os
 import subprocess
 import sys
-from time import sleep
 import apt_pkg
+import git
 import git.config
 from github import Github
 from launchpadlib.launchpad import Launchpad
-import git
 
 DEFAULT_SERIES_NAME = "noble"
 
+
 def get_packages_list() -> list:
-    with open("/tmp/patched-packages", 'r', encoding='utf-8') as file:
+    with open("/tmp/patched-packages", "r", encoding="utf-8") as file:
         items = file.read().splitlines()
     return items
+
 
 def github_pull_exists(title, repo):
     """Check if GitHub Actions has already opened a PR with this title"""
@@ -25,17 +26,19 @@ def github_pull_exists(title, repo):
             return True
     return False
 
+
 def main():
     series_name = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_SERIES_NAME
 
     # Configuring this repo to be able to commit as a bot
-    current_repo = git.Repo('.')
+    current_repo = git.Repo(".")
     with current_repo.config_writer(config_level="global") as git_config:
-        git_config.set_value('user', 'email', "github-actions[bot]@users.noreply.github.com")
-        git_config.set_value('user', 'name', "github-actions[bot]")
+        git_config.set_value(
+            "user", "email", "github-actions[bot]@users.noreply.github.com"
+        )
+        git_config.set_value("user", "name", "github-actions[bot]")
         git_config.set_value("checkout", "defaultRemote", "origin")
-        git_config.add_value('safe','directory', "/__w/os-patches/os-patches")
-
+        git_config.add_value("safe", "directory", "/__w/os-patches/os-patches")
 
     current_repo.git.fetch("--all")
 
@@ -62,7 +65,9 @@ def main():
 
     for package_and_upstream in packages_and_upstream:
         package_name, *upstream_series_name = package_and_upstream.split(":", 1)
-        upstream_series_name = upstream_series_name[0] if upstream_series_name else series_name
+        upstream_series_name = (
+            upstream_series_name[0] if upstream_series_name else series_name
+        )
         print(package_name, upstream_series_name)
 
         series = ubuntu.getSeries(name_or_version=series_name)
@@ -101,23 +106,23 @@ def main():
             base_branch = f"{package_name}-{upstream_series_name}"
             new_branch = f"bot/update/{package_name}-{upstream_series_name}"
 
-                # Checkout the base branch
+            # Checkout the base branch
             current_repo.git.checkout(base_branch)
             # Create and checkout the new branch
-            current_repo.git.checkout('-b', new_branch)
+            current_repo.git.checkout("-b", new_branch)
 
             p_apt_source = subprocess.run(
                 f"apt source {package_name}",
-                    shell=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    check=True,
-                    encoding='utf-8'
-                )
-            
-            # getting the directory to which source is extracted
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True,
+                encoding="utf-8",
+            )
+
+            # getting the directory to which the source is extracted
             extraction_dest = ""
-            for line in p_apt_source.stdout.split('\n'):
+            for line in p_apt_source.stdout.split("\n"):
                 if "dpkg-source: info: extracting" in line:
                     print(line)
                     extraction_dest = line.split()[-1]
@@ -127,25 +132,24 @@ def main():
                 shell=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                check=True
+                check=True,
             )
             subprocess.run(
-                    f"cp -r {extraction_dest}/* .",
-                    shell=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    check=True
-                )
-
+                f"cp -r {extraction_dest}/* .",
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True,
+            )
 
             subprocess.run(
-                    f"rm -r {extraction_dest}",
-                    shell=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    check=True
-                )
-            
+                f"rm -r {extraction_dest}",
+                shell=True,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True,
+            )
+
             current_repo.git.add(A=True)
             current_repo.index.commit(f"Update to {package_name} {pocket_version}")
             current_repo.git.push("origin", new_branch)
@@ -156,6 +160,7 @@ def main():
                 body=f"""A new version of `{package_name} {pocket_version}` replaces `{patched_version}`.""",
             )
             current_repo.git.checkout("master")
+
 
 if __name__ == "__main__":
     main()
