@@ -119,7 +119,7 @@ def main():
             current_repo.git.checkout('-b', new_branch)
 
             p_apt_source = subprocess.run(
-                f"apt source {package_name} ",
+                f"apt source {package_name}",
                     shell=True,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
@@ -136,31 +136,31 @@ def main():
                 check=True
             )
 
-        try:
-            subprocess.run(
-                f"cp -r {package_name}-{pocket_version}/* .",
-                shell=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                check=True
-            )
-        except subprocess.CalledProcessError as err:
-            print(err)
-            print("Trying without pocket version")
-            subprocess.run(
-                f"cp -r {package_name}/* .",
-                shell=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                check=True
-            )
+        # try:
+        #     subprocess.run(
+        #         f"cp -r {package_name}-{pocket_version}/* .",
+        #         shell=True,
+        #         stdout=subprocess.PIPE,
+        #         stderr=subprocess.PIPE,
+        #         check=True
+        #     )
+        # except subprocess.CalledProcessError as err:
+        #     print(err)
+        #     print("Trying without pocket version")
+        #     subprocess.run(
+        #         f"cp -r {package_name}/* .",
+        #         shell=True,
+        #         stdout=subprocess.PIPE,
+        #         stderr=subprocess.PIPE,
+        #         check=True
+        #     )
 
-            subprocess.check_call(
-                f"rm -r {package_name}-{pocket_version}",
-                shell=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
+        #     subprocess.check_call(
+        #         f"rm -r {package_name}-{pocket_version}",
+        #         shell=True,
+        #         stdout=subprocess.PIPE,
+        #         stderr=subprocess.PIPE,
+        #     )
 
 
 if __name__ == "__main__":
