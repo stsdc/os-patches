@@ -30,7 +30,7 @@ def main():
 
     # Configuring this repo to be able to commit as a bot
     current_repo = git.Repo('.')
-    with current_repo.config_writer() as git_config:
+    with current_repo.config_writer(config_level="global") as git_config:
         git_config.set_value('user', 'email', "github-actions[bot]@users.noreply.github.com")
         git_config.set_value('user', 'name', "github-actions[bot]")
         git_config.set_value("checkout", "defaultRemote", "origin")
