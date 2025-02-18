@@ -123,7 +123,8 @@ def main():
                     shell=True,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
-                    check=True
+                    check=True,
+                    encoding='utf-8'
                 )
             for line in p_apt_source.stdout.split('\n'):
                 if "dpkg-source: info: extracting" in line:
