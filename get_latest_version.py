@@ -25,16 +25,6 @@ def github_pull_exists(title, repo):
             return True
     return False
 
-def get_upstream_sources():
-    """Get the current version of a package in upstream PPA"""
-    return ubuntu_archive.getPublishedSources(
-        exact_match=True,
-        source_name=component_name,
-        status="Published",
-        pocket=pocket,
-        distro_series=upstream_series,
-    )
-
 def main():
     series_name = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_SERIES_NAME
 
@@ -49,12 +39,10 @@ def main():
 
     current_repo.git.fetch("--all")
 
-    # github_token = os.environ["GITHUB_TOKEN"]
-    # github_repo = os.environ["GITHUB_REPOSITORY"]
-    # github = Github(github_token)
-    # repo = github.get_repo(github_repo)
-
-
+    github_token = os.environ["GITHUB_TOKEN"]
+    github_repo = os.environ["GITHUB_REPOSITORY"]
+    github = Github(github_token)
+    repo = github.get_repo(github_repo)
 
     # Initialize APT
     apt_pkg.init_system()
@@ -107,8 +95,8 @@ def main():
                 continue
 
             pull_title = f"📦 Update {package_name} [{upstream_series_name}]"
-            # if github_pull_exists(pull_title):
-            #     continue
+            if github_pull_exists(pull_title, repo):
+                continue
 
             base_branch = f"{package_name}-{upstream_series_name}"
             new_branch = f"bot/update/{package_name}-{upstream_series_name}"
@@ -150,16 +138,23 @@ def main():
                 )
 
 
-            subprocess.check_call(
+            subprocess.run(
                     f"rm -r {extraction_dest}",
                     shell=True,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
+                    check=True
                 )
             
             current_repo.git.add(A=True)
             current_repo.index.commit(f"Update to {package_name} {pocket_version}")
             current_repo.git.push("origin", new_branch)
+            pr = repo.create_pull(
+                base=base_branch,
+                head=new_branch,
+                title=pull_title,
+                body=f"""A new version of `{package_name} {pocket_version}` replaces `{patched_version}`.""",
+            )
             current_repo.git.checkout("master")
 
 if __name__ == "__main__":
