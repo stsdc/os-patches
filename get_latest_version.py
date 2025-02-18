@@ -136,20 +136,22 @@ def main():
             )
 
         try:
-            subprocess.check_call(
+            subprocess.run(
                 f"cp -r {package_name}-{pocket_version}/* .",
                 shell=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
+                check=True
             )
         except subprocess.CalledProcessError as err:
             print(err)
             print("Trying without pocket version")
-            subprocess.check_call(
+            subprocess.run(
                 f"cp -r {package_name}/* .",
                 shell=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
+                check=True
             )
 
             subprocess.check_call(
