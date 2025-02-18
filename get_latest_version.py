@@ -156,7 +156,11 @@ def main():
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                 )
-
+            
+            current_repo.git.add(A=True)
+            current_repo.index.commit(f"Update to {package_name} {pocket_version}")
+            current_repo.git.push()
+            current_repo.git.checkout("master")
 
 if __name__ == "__main__":
     main()
