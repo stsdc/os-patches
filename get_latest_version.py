@@ -159,7 +159,7 @@ def main():
             
             current_repo.git.add(A=True)
             current_repo.index.commit(f"Update to {package_name} {pocket_version}")
-            current_repo.git.push()
+            current_repo.git.push("origin", new_branch)
             current_repo.git.checkout("master")
 
 if __name__ == "__main__":
