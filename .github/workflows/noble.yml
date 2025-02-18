@@ -10,14 +10,9 @@ jobs:
     steps:
     - name: Checkout the import-list
       uses: actions/checkout@v4
-      # with:
-      #   ref: import-list-noble
-      #   fetch-depth: 1
-
-    - name: Checkout import-list-noble
-      run: |
-        git config --global --add safe.directory /__w/os-patches/os-patches &&
-        git switch import-list-noble
+      with:
+        ref: import-list-noble
+        fetch-depth: 1
 
     - name: Get the list of packages
       run: |
