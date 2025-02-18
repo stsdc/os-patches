@@ -125,8 +125,9 @@ def main():
                     stderr=subprocess.PIPE,
                     check=True
                 )
-            print(p_apt_source.stderr.decode('utf-8'))
-            print(p_apt_source.stdout.decode('utf-8'))
+            for line in p_apt_source.stdout.split('\n'):
+                if "dpkg-source: info: extracting" in line:
+                    print(line)
 
             subprocess.run(
                 "rm *.tar.* *.dsc",
