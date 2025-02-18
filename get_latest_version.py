@@ -126,9 +126,14 @@ def main():
                     check=True,
                     encoding='utf-8'
                 )
+            
+            # getting the directory to which source is extracted
+            extraction_dest = ""
             for line in p_apt_source.stdout.split('\n'):
                 if "dpkg-source: info: extracting" in line:
                     print(line)
+                    extraction_dest = line.split()[-1]
+                    print(extraction_dest)
 
             subprocess.run(
                 "rm *.tar.* *.dsc",
