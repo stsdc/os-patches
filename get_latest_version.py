@@ -133,7 +133,6 @@ def main():
                 if "dpkg-source: info: extracting" in line:
                     print(line)
                     extraction_dest = line.split()[-1]
-                    print(extraction_dest)
 
             subprocess.run(
                 "rm *.tar.* *.dsc",
@@ -142,28 +141,17 @@ def main():
                 stderr=subprocess.PIPE,
                 check=True
             )
-
-            try:
-                subprocess.run(
-                    f"cp -r {package_name}-{pocket_version}/* .",
-                    shell=True,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    check=True
-                )
-            except subprocess.CalledProcessError as err:
-                print(err)
-                print("Trying without pocket version")
-                subprocess.run(
-                    f"cp -r {package_name}/* .",
+            subprocess.run(
+                    f"cp -r {extraction_dest}/* .",
                     shell=True,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     check=True
                 )
 
-                subprocess.check_call(
-                    f"rm -r {package_name}-{pocket_version}",
+
+            subprocess.check_call(
+                    f"rm -r {extraction_dest}",
                     shell=True,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
