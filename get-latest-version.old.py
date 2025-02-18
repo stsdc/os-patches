@@ -158,12 +158,20 @@ for pocket in ["Release", "Security", "Updates"]:
         stderr=subprocess.PIPE,
     )
 
-    subprocess.check_call(
-        f"cp -r {component_name}-{pocket_version}/* .",
-        shell=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-    )
+    try:
+        subprocess.check_call(
+            f"cp -r {component_name}-{pocket_version}/* .",
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+    except subprocess.CalledProcessError:
+        subprocess.check_call(
+            f"cp -r {component_name}/* .",
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
     # sleep(1)
     # files = os.listdir('.')
     # for file in files:
