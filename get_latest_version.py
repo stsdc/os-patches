@@ -119,12 +119,13 @@ def main():
             current_repo.git.checkout('-b', new_branch)
 
             p_apt_source = subprocess.run(
-                    f"apt source {package_name} ",
+                f"apt source {package_name} ",
                     shell=True,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     check=True
                 )
+            print(p_apt_source.stderr.decode('utf-8'))
             print(p_apt_source.stdout.decode('utf-8'))
 
             subprocess.run(
