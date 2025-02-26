@@ -62,6 +62,7 @@ def main():
     )
 
     packages_and_upstream = get_packages_list()
+    series = ubuntu.getSeries(name_or_version=series_name)
 
     for package_and_upstream in packages_and_upstream:
         package_name, *upstream_series_name = package_and_upstream.split(":", 1)
@@ -70,7 +71,7 @@ def main():
         )
         print(package_name, upstream_series_name)
 
-        series = ubuntu.getSeries(name_or_version=series_name)
+        
         upstream_series = ubuntu.getSeries(name_or_version=upstream_series_name)
 
         patched_sources = patches_archive.getPublishedSources(
