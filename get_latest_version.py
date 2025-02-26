@@ -11,9 +11,10 @@ from launchpadlib.launchpad import Launchpad
 
 DEFAULT_SERIES_NAME = "noble"
 
+PACKAGES_TO_IMPORT_PATH = os.environ.get("PACKAGES_TO_IMPORT_PATH", "/tmp/patched-packages")
 
 def get_packages_list() -> list:
-    with open("/tmp/patched-packages", "r", encoding="utf-8") as file:
+    with open(PACKAGES_TO_IMPORT_PATH, "r", encoding="utf-8") as file:
         items = file.read().splitlines()
     return items
 
